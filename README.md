@@ -7,3 +7,4 @@ Arya and Lardner, Mathematics for the Biological Sciences <br>
 
 - [Differential calculus: Functions, limits, and derivatives](https://github.com/LilianYou/Geography_Analytics/tree/main/Differential%20calculus:%20Functions%2C%20limits%2C%20and%20derivatives)
 - [Differential calculus: Exponential functions, Taylor series](https://github.com/LilianYou/Geography_Analytics/tree/main/Differential%20calculus:%20Exponential%20functions%2C%20Taylor%20series)
+- [Differential calculus: Maxima and minima; Newton’s method]
