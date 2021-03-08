@@ -7,6 +7,7 @@ jacobian.m <br>
 myfun_sec9.m <br>
 nonlinear_sys.m <br>
 homework7.m <br>
+LinearSystem.m <br>
 
 My Report: <br>
 [Linear_Nonlinear_System_Analysis](https://github.com/LilianYou/Geography_Analytics/blob/main/Linear%20algebra:%20Systems%20of%20differential%20equations/math_assignment7.pdf)
