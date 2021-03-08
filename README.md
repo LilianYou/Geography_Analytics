@@ -10,3 +10,4 @@ Arya and Lardner, Mathematics for the Biological Sciences <br>
 - [Differential calculus: Maxima and minima; Newton’s method](https://github.com/LilianYou/Geography_Analytics/tree/main/Differential%20calculus:%20Maxima%20and%20minima%3B%20Newton%E2%80%99s%20method)
 - [Integral calculus: Anti-derivatives; Indefinite and definite integrals; Numerical
 integration methods](https://github.com/LilianYou/Geography_Analytics/tree/main/Integral%20calculus:%20Anti-derivatives%3B%20Indefinite%20and%20definite%20integrals%3B%20Numerical%20integration%20methods)
+- [Multi-dimensional calculus](https://github.com/LilianYou/Geography_Analytics/tree/main/Multi-dimensional%20calculus)
