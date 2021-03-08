@@ -1,5 +1,6 @@
 # Geography_Analytics
-A list of exercises in analytical methods for geography research, including calculus, differential equations, and linear algebra. This repository only includes my own course work. Thanks for the guidance from [Prof. Tim DeVries](https://www.geog.ucsb.edu/people/faculty/tim-devries) which gives me a good start in analyzing environmental data.
+## Section A
+A list of exercises in analytical methods for geography research, including calculus, differential equations, and linear algebra. This repository only includes my own course work. Thanks for the guidance from [Prof. Tim DeVries](https://www.geog.ucsb.edu/people/faculty/tim-devries).
 
 Recommended book resource: <br>
 Menke and Menke, [Environmental Data Analysis with MATLAB](http://www.sciencedirect.com/science/book/9780128044889) <br>
@@ -14,3 +15,7 @@ integration methods](https://github.com/LilianYou/Geography_Analytics/tree/main/
 - [Ordinary differential equations; Analytical methods; Models](https://github.com/LilianYou/Geography_Analytics/tree/main/Ordinary%20differential%20equations%3B%20Analytical%20methods%3B%20Models)
 - [Linear algebra: Systems of differential equations](https://github.com/LilianYou/Geography_Analytics/tree/main/Linear%20algebra:%20Systems%20of%20differential%20equations)
 - [Combined exercise: Using all methods](https://github.com/LilianYou/Geography_Analytics/tree/main/Combined%20exercise:%20Using%20all%20methods)
+
+## Section B
+A list of exercises in probability and statistics, multivariate analysis methods, and regression techniques in Geography. Examples are from cross-sectional and spatial data analyses, linear and non-linear regression models, models for qualitative and other discrete dependent variables models.This repository only includes my own course work. Thanks for the guidance from [Prof. Konstadinos Goulias](https://www.geog.ucsb.edu/people/faculty/konstadinos-goulias).
+
