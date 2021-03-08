@@ -13,3 +13,4 @@ integration methods](https://github.com/LilianYou/Geography_Analytics/tree/main/
 - [Multi-dimensional calculus](https://github.com/LilianYou/Geography_Analytics/tree/main/Multi-dimensional%20calculus)
 - [Ordinary differential equations; Analytical methods; Models](https://github.com/LilianYou/Geography_Analytics/tree/main/Ordinary%20differential%20equations%3B%20Analytical%20methods%3B%20Models)
 - [Linear algebra: Systems of differential equations](https://github.com/LilianYou/Geography_Analytics/tree/main/Linear%20algebra:%20Systems%20of%20differential%20equations)
+- [Combined exercise: Using all methods]()
