@@ -1,4 +1,4 @@
-In this problem, I built spatial regression models.
+In this problem, I built spatial regression models including non spatial OLS, spatial lag, spatial error, SARAR, spatial lag with lagged explanatory variables, and SARAR with Lagged explanatory variables.
 
 Data: <br>
 LPA_Pop_Char_bg.shp
