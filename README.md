@@ -17,7 +17,7 @@ integration methods](https://github.com/LilianYou/Geography_Analytics/tree/main/
 - [Combined exercise: Using all methods](https://github.com/LilianYou/Geography_Analytics/tree/main/Combined%20exercise:%20Using%20all%20methods)
 
 ## Section B
-A list of exercises in probability and statistics, multivariate analysis methods, and regression techniques in Geography. Examples are from cross-sectional and spatial data analyses, linear and non-linear regression models, models for qualitative and other discrete dependent variables models.This repository only includes my own course work. Thanks for the guidance from [Prof. Konstadinos Goulias](https://www.geog.ucsb.edu/people/faculty/konstadinos-goulias).
+A list of exercises in probability and statistics, multivariate analysis methods, and regression techniques in Geography. Examples are from cross-sectional and spatial data analyses, linear and non-linear regression models, models for qualitative and other discrete dependent variables models. This repository only includes my own course work. Thanks for the guidance from [Prof. Konstadinos Goulias](https://www.geog.ucsb.edu/people/faculty/konstadinos-goulias).
 - [Linear Regression Models](https://github.com/LilianYou/Geography_Analytics/tree/main/Linear%20Regression%20Models)
 - [Matrix Linear Regression and Diagnostics](https://github.com/LilianYou/Geography_Analytics/tree/main/Matrix%20Linear%20Regression%20and%20Diagnostics)
 - [Spatial Regression Models](https://github.com/LilianYou/Geography_Analytics/tree/main/Spatial%20Regression%20Models)
@@ -25,4 +25,4 @@ A list of exercises in probability and statistics, multivariate analysis methods
 - [a ggplot visualization exercise](https://github.com/LilianYou/Geography_Analytics/tree/main/ggplot%20visualization%20exercise)
 
 ## Section C
-A list of exercises cover several key concepts that are useful to solve typical problems in environmental science, such as linear and non-linear time series analysis, matrix methods, filtering, linear model, and regridding method/analysis. Thanks for the guidance from [Prof. Qinghua Ding](https://www.geog.ucsb.edu/people/faculty/qinghua-ding)
+A list of exercises cover several key concepts that are useful to solve typical problems in environmental science, such as linear and non-linear time series analysis, matrix methods, filtering, linear model, and regridding method/analysis. This repository only includes my own course work. Thanks for the guidance from [Prof. Qinghua Ding](https://www.geog.ucsb.edu/people/faculty/qinghua-ding).
