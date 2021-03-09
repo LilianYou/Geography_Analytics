@@ -22,7 +22,7 @@ A list of exercises in probability and statistics, multivariate analysis methods
 - [Matrix Linear Regression and Diagnostics](https://github.com/LilianYou/Geography_Analytics/tree/main/Matrix%20Linear%20Regression%20and%20Diagnostics)
 - [Spatial Regression Models](https://github.com/LilianYou/Geography_Analytics/tree/main/Spatial%20Regression%20Models)
 - [Spatial Point Patterns & Kriging](https://github.com/LilianYou/Geography_Analytics/tree/main/Spatial%20Point%20Patterns%20&%20Kriging)
-- [a ggplot visualization exercise](https://github.com/LilianYou/Geography_Analytics/tree/main/ggplot%20visualization%20exercise)
+- [A ggplot visualization exercise](https://github.com/LilianYou/Geography_Analytics/tree/main/ggplot%20visualization%20exercise)
 
 ## Section C
 A list of exercises cover several key concepts that are useful to solve typical problems in environmental science, such as linear and non-linear time series analysis, matrix methods, filtering, linear model, and regridding method/analysis. This repository only includes my own course work. Thanks for the guidance from [Prof. Qinghua Ding](https://www.geog.ucsb.edu/people/faculty/qinghua-ding).
