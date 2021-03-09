@@ -1,0 +1,326 @@
+---
+title: "Assignment 4: Spatial Point Patterns & Kriging"
+output: pdf_document
+---
+Lily Cheng
+```{r}
+library(dplyr)
+library(maps)
+library(maptools)
+library(sp)
+library(spdep)
+library(gstat)
+library(splancs)
+library(spatstat)
+library(RColorBrewer) ## Visualization
+library(classInt) ## Class intervals
+library(spgwr) ## GWR (not sure we need this for now)
+library(lattice)
+library(rgdal) ## Geospatial data abstraction library
+```
+
+```{r}
+my2k = readRDS('~/Desktop/Winter_2018/210B/Assignment4/h2kb.rds')
+class(my2k)
+summary(my2k)
+data <- my2k
+```
+
+Create a matrix of coordinates from the point coordinates of the data file my2k (renamed
+data)
+
+```{r}
+sp_point <- cbind(data$XCORD, data$YCORD)
+colnames(sp_point) <- c("LONG","LAT")
+head(sp_point)
+```
+**Part 1:** Use the points I used for the examples in class (file h2kb.rds) and select two random samples of points from the California dataset of points (see page 7 of my notes).  The first sample should be with 100 points (called herein SAMPLE1) and the second with 500 points (SAMPLE2). Compute the G function and F function for each sample and discuss the differences and commonalities between the two samples.
+```{r}
+proj <- CRS("+proj=utm +zone=10 +datum=WGS84")
+summary(proj)
+data.sp <- SpatialPointsDataFrame(coords=sp_point,data,proj4string=proj)
+summary(data.sp)
+bbox(data.sp)
+par(mar=c(2,2,0.2,0.2))
+plot(data.sp,pch=16, cex=.5, axes=T)
+```
+SAMPLE1
+
+```{r}
+SAMPLE1 <- data[sample(100,replace=F),]
+names(SAMPLE1)
+head(SAMPLE1)
+dim(SAMPLE1)
+
+sp_point_SAMPLE1 <- matrix(NA, nrow=nrow(SAMPLE1),ncol=2)
+sp_point_SAMPLE1[,1] <- SAMPLE1$XCORD
+sp_point_SAMPLE1[,2] <- SAMPLE1$YCORD
+colnames(sp_point_SAMPLE1) <- c("LONG","LAT")
+plot(sp_point_SAMPLE1)
+class(sp_point_SAMPLE1)
+
+```
+SAMPLE2
+```{r}
+SAMPLE2 <- data[sample(500,replace=F),]
+names(SAMPLE2)
+head(SAMPLE2)
+dim(SAMPLE2)
+
+sp_point_SAMPLE2 <- matrix(NA, nrow=nrow(SAMPLE2),ncol=2)
+sp_point_SAMPLE2[,1] <- SAMPLE2$XCORD
+sp_point_SAMPLE2[,2] <- SAMPLE2$YCORD
+colnames(sp_point_SAMPLE2) <- c("LONG","LAT")
+plot(sp_point_SAMPLE2)
+class(sp_point_SAMPLE2)
+
+```
+SAMPLE1
+Create points that are uniformly distributed in space
+```{r}
+## Random points
+u.x_SAMPLE1 <- runif(n=nrow(sp_point_SAMPLE1), min=bbox(sp_point_SAMPLE1)[1,1], max=bbox(sp_point_SAMPLE1)[1,2])
+u.y_SAMPLE1 <- runif(n=nrow(sp_point_SAMPLE1), min=bbox(sp_point_SAMPLE1)[2,1], max=bbox(sp_point_SAMPLE1)[2,2])
+```
+SAMPLE1
+Create points that are equispaced distributed in space
+```{r}
+## Regular points
+r.x_SAMPLE1 <- seq(from=min(sp_point_SAMPLE1[,1]),to=max(sp_point_SAMPLE1[,1]),
+                   length=sqrt(nrow(sp_point_SAMPLE1)))
+r.y_SAMPLE1 <- seq(from=min(sp_point_SAMPLE1[,2]),to=max(sp_point_SAMPLE1[,2]),
+                   length=sqrt(nrow(sp_point_SAMPLE1)))
+r.x_SAMPLE1 <- jitter(rep(r.x_SAMPLE1,length(r.x_SAMPLE1)),.001)
+r.y_SAMPLE1 <- jitter(rep(r.y_SAMPLE1,each=length(r.y_SAMPLE1)),.001)
+```
+SAMPLE1
+Plot the points to compare visually
+```{r}
+## Plot the points
+par(mfrow=c(1,3),mar=c(4,4,1.5,0.5))
+plot(x=sp_point_SAMPLE1[,1],y=sp_point_SAMPLE1[,2],main="California Data", xlab="LONG",ylab="
+LAT",cex=.5)
+plot(x=u.x_SAMPLE1,y=u.y_SAMPLE1,main="Random Points", xlab="LONG",ylab="LAT",cex=.5)
+plot(x=r.x_SAMPLE1,y=r.y_SAMPLE1,main="Regular Points", xlab="LONG",ylab="LAT",cex=.5)
+```
+
+SAMPLE2
+Create points that are uniformly distributed in space
+```{r}
+## Random points
+u.x_SAMPLE2 <- runif(n=nrow(sp_point_SAMPLE2), min=bbox(sp_point_SAMPLE2)[1,1], max=bbox(sp_point_SAMPLE2)[1,2])
+u.y_SAMPLE2 <- runif(n=nrow(sp_point_SAMPLE2), min=bbox(sp_point_SAMPLE2)[2,1], max=bbox(sp_point_SAMPLE2)[2,2])
+```
+SAMPLE2
+Create points that are equispaced distributed in space
+```{r}
+## Regular points
+r.x_SAMPLE2 <- seq(from=min(sp_point_SAMPLE2[,1]),to=max(sp_point_SAMPLE2[,1]),
+                   length=sqrt(nrow(sp_point_SAMPLE2)))
+r.y_SAMPLE2 <- seq(from=min(sp_point_SAMPLE2[,2]),to=max(sp_point_SAMPLE2[,2]),
+                   length=sqrt(nrow(sp_point_SAMPLE2)))
+r.x_SAMPLE2 <- jitter(rep(r.x_SAMPLE2,length(r.x_SAMPLE2)),.001)
+r.y_SAMPLE2 <- jitter(rep(r.y_SAMPLE2,each=length(r.y_SAMPLE2)),.001)
+```
+SAMPLE2
+Plot the points to compare visually
+```{r}
+## Plot the points
+par(mfrow=c(1,3),mar=c(4,4,1.5,0.5))
+plot(x=sp_point_SAMPLE2[,1],y=sp_point_SAMPLE2[,2],main="California Data", xlab="LONG",ylab="
+LAT",cex=.5)
+plot(x=u.x_SAMPLE2,y=u.y_SAMPLE2,main="Random Points", xlab="LONG",ylab="LAT",cex=.5)
+plot(x=r.x_SAMPLE2,y=r.y_SAMPLE2,main="Regular Points", xlab="LONG",ylab="LAT",cex=.5)
+```
+
+Create function of conversion between kilometers and degrees.
+Function km2d (km to degrees)
+```{r}
+km2d <- function(km){
+out <- (km/1.852)/60
+return(out)
+}
+```
+Function d2km (degrees to km)
+```{r}
+d2km <- function(d){
+out <- d*60*1.852
+return(out)
+}
+```
+Create a sequence of distances to compute G
+```{r}
+r <- seq(0,km2d(10),length.out=10000)
+plot(r)
+```
+
+**G-Test: California points vs Uniformly distributed points**
+```{r}
+env.u_SAMPLE1 <- envelope(ppp(x=u.x_SAMPLE1,y=u.y_SAMPLE1,window=owin(bbox(sp_point_SAMPLE1)[1,],bbox(sp_point_SAMPLE1)[2,])), fun=Gest, r=r, nsim=99, nrank=2)
+plot(env.u_SAMPLE1)
+env.u_SAMPLE2 <- envelope(ppp(x=u.x_SAMPLE2,y=u.y_SAMPLE2,window=owin(bbox(sp_point_SAMPLE2)[1,],bbox(sp_point_SAMPLE2)[2,])), fun=Gest, r=r, nsim=99, nrank=2)
+plot(env.u_SAMPLE2)
+```
+```{r}
+## G-Test: California points
+r <- seq(0,km2d(10),length.out=10000)
+env_SAMPLE1 <- envelope(ppp(x=sp_point_SAMPLE1[,1],y=sp_point_SAMPLE1[,2],window=owin(bbox(sp_point_SAMPLE1)[1,],bbox(sp_point_SAMPLE1)[2,])), fun=Gest, r=r, nsim=99, nrank=2)
+env_SAMPLE2 <- envelope(ppp(x=sp_point_SAMPLE2[,1],y=sp_point_SAMPLE2[,2],window=owin(bbox(sp_point_SAMPLE2)[1,],bbox(sp_point_SAMPLE2)[2,])), fun=Gest, r=r, nsim=99, nrank=2)
+```
+```{r}
+summary(env_SAMPLE1)
+summary(env_SAMPLE2)
+```
+
+```{r}
+plot(env_SAMPLE1)
+plot(env_SAMPLE2)
+```
+**Commonalities:** in the above plots, (1) G values from both data SAMPLE1 and data SAMPLE2 are above the randomization envelope. Therefore, G Functions of both SAMPLE1 and SAMPLE2 show there is clustering in the data. (2) simulated curve of pointwise critical envelope is the same for both SAMPLE1 and SAMPLE2.
+
+**Differences:** in the above plots, (1) the curve for G values of SAMPLE1 is less smooth and less curvy than SAMPLE2. (2) The lower envelope for SAMPLE1 is more constant and lower than the lower envelope of SAMPLE2. The upper envelope for SAMPLE1 is more choppy and higher than SAMPLE2. Thus, the range between upper envelope and lower envelope of SAMPLE1 is bigger than SAMPLE2 which means there is higher variablility in randomazation envelope of SAMPLE1. 
+
+**F function**
+```{r}
+Fenv.u_SAMPLE1 <- envelope(ppp(x=u.x_SAMPLE1,y=u.y_SAMPLE1,window=owin(bbox(sp_point_SAMPLE1)[1,],bbox(sp_point_SAMPLE1)[2,])), fun=Fest, r=r, nsim=99, nrank=2)
+plot(Fenv.u_SAMPLE1)
+
+Fenv.u_SAMPLE2 <- envelope(ppp(x=u.x_SAMPLE2,y=u.y_SAMPLE2,window=owin(bbox(sp_point_SAMPLE2)[1,],bbox(sp_point_SAMPLE2)[2,])), fun=Fest, r=r, nsim=99, nrank=2)
+plot(Fenv.u_SAMPLE2)
+```
+```{r}
+## F-Test: California points
+r <- seq(0,km2d(10),length.out=10000)
+Fenv_SAMPLE1 <- envelope(ppp(x=sp_point_SAMPLE1[,1],y=sp_point_SAMPLE1[,2],
+                             window=owin(bbox(sp_point_SAMPLE1)[1,],bbox(sp_point_SAMPLE1)[2,])),
+                         fun=Fest, r=r, nsim=99, nrank=2)
+summary(Fenv_SAMPLE1)
+
+Fenv_SAMPLE2 <- envelope(ppp(x=sp_point_SAMPLE2[,1],y=sp_point_SAMPLE2[,2],
+                             window=owin(bbox(sp_point_SAMPLE2)[1,],bbox(sp_point_SAMPLE2)[2,])),
+                         fun=Fest, r=r, nsim=99, nrank=2)
+summary(Fenv_SAMPLE2)
+```
+```{r}
+plot(Fenv_SAMPLE1)
+plot(Fenv_SAMPLE2)
+```
+**Commonalities:** (1) F values from both data SAMPLE1 and data SAMPLE2 are below the envelope of the Fs under Poisson that both samples shows data clustering. (2) simulated curve of pointwise critical envelope is the same for both SAMPLE1 and SAMPLE2.
+
+**Differences:** in the above plots, (1) the curve for F values of SAMPLE1 is less smooth and higher than SAMPLE2. (2) The lower envelope for SAMPLE1 is lower and the curve is less smooth than the lower envelope of SAMPLE2. The upper envelope for SAMPLE1 is more choppy than SAMPLE2. Thus, the range between upper envelope and lower envelope of SAMPLE1 is bigger than SAMPLE2 which means there is higher variablility in randomazation envelope of SAMPLE1. 
+
+**Part2:** Use SAMPLE1 and SAMPLE2 to build kernel densities and describe differences and commonalities between the two samples.
+
+```{r}
+poly_SAMPLE1 <- as.points(c(min(sp_point_SAMPLE1[,1]),max(sp_point_SAMPLE1[,1]),
+                    max(sp_point_SAMPLE1[,1]),min(sp_point_SAMPLE1[,1])),c(max(sp_point_SAMPLE1[,2]),                     max(sp_point_SAMPLE1[,2]),min(sp_point_SAMPLE1[,2]),min(sp_point_SAMPLE1[,2])))
+plot(poly_SAMPLE1, type="l")
+class(poly_SAMPLE1)
+
+poly_SAMPLE2 <- as.points(c(min(sp_point_SAMPLE2[,1]),max(sp_point_SAMPLE2[,1]),
+                    max(sp_point_SAMPLE2[,1]),min(sp_point_SAMPLE2[,1])),c(max(sp_point_SAMPLE2[,2]),                     max(sp_point_SAMPLE2[,2]),min(sp_point_SAMPLE2[,2]),min(sp_point_SAMPLE2[,2])))
+plot(poly_SAMPLE2, type="l")
+class(poly_SAMPLE2)
+```
+
+```{r}
+mserw_SAMPLE1 <- mse2d(sp_point_SAMPLE1, poly=poly_SAMPLE1, nsmse=100, range=0.1)
+summary(mserw_SAMPLE1)
+class(mserw_SAMPLE1)
+summary(mserw_SAMPLE1$mse, mser_SAMPLE1w$h)
+print(mserw_SAMPLE1)
+help(mse2d_SAMPLE1)
+plot(mserw_SAMPLE1$h, mserw_SAMPLE1$mse)
+
+mserw_SAMPLE2 <- mse2d(sp_point_SAMPLE2, poly=poly_SAMPLE2, nsmse=100, range=0.1)
+summary(mserw_SAMPLE2)
+class(mserw_SAMPLE2)
+summary(mserw_SAMPLE2$mse, mser_SAMPLE2w$h)
+print(mserw_SAMPLE2)
+help(mse2d_SAMPLE2)
+plot(mserw_SAMPLE2$h, mserw_SAMPLE2$mse)
+```
+
+```{r}
+bw_SAMPLE1 <- mserw_SAMPLE1$h[which.min(mserw_SAMPLE1$mse)] ## Bandwidth=.01
+summary(bw_SAMPLE1)
+
+bw_SAMPLE2 <- mserw_SAMPLE2$h[which.min(mserw_SAMPLE2$mse)] ## Bandwidth=.01
+summary(bw_SAMPLE2)
+```
+```{r}
+par(mar=c(4,4,0.5,0.5))
+plot(x=mserw_SAMPLE1$h, y=mserw_SAMPLE1$mse, xlab="Bandwidth_SAMPLE1", ylab="MSE", type="l")
+i<-which.min(mserw_SAMPLE1$mse)
+points(mserw_SAMPLE1$h[i], mserw_SAMPLE1$mse[i])
+
+plot(x=mserw_SAMPLE2$h, y=mserw_SAMPLE2$mse, xlab="Bandwidth_SAMPLE1", ylab="MSE", type="l")
+j<-which.min(mserw_SAMPLE2$mse)
+points(mserw_SAMPLE1$h[j], mserw_SAMPLE1$mse[j])
+```
+
+```{r}
+sp_points_SAMPLE1 <- SpatialPoints(coords=sp_point_SAMPLE1, proj4string=CRS("+proj=utm +zone=
+10 +datum=WGS84"))
+class(sp_points_SAMPLE1)
+
+sp_points_SAMPLE2 <- SpatialPoints(coords=sp_point_SAMPLE2, proj4string=CRS("+proj=utm +zone=
+10 +datum=WGS84"))
+class(sp_points_SAMPLE2)
+```
+```{r}
+grd_SAMPLE1 <- Sobj_SpatialGrid(sp_points_SAMPLE1,maxDim=100)$SG
+class(grd_SAMPLE1)
+
+grd_SAMPLE2 <- Sobj_SpatialGrid(sp_points_SAMPLE2,maxDim=100)$SG
+class(grd_SAMPLE2)
+```
+```{r}
+grd_SAMPLE1 <- GridTopology(summary(grd_SAMPLE1)$grid[,1],
+                          cellsize=summary(grd_SAMPLE1)$grid[,2],
+                          cells.dim=summary(grd_SAMPLE1)$grid[,3])
+class(grd_SAMPLE1)
+
+grd_SAMPLE2 <- GridTopology(summary(grd_SAMPLE2)$grid[,1],
+                          cellsize=summary(grd_SAMPLE2)$grid[,2],
+                          cells.dim=summary(grd_SAMPLE2)$grid[,3])
+class(grd_SAMPLE2)
+```
+I estimate kernel density based on minimizing mean squared error with an equation derived by Diggle.
+```{r}
+kernel_SAMPLE1 <- spkernel2d(sp_point_SAMPLE1, poly=poly_SAMPLE1, h0=bw_SAMPLE1, grd=grd_SAMPLE1)
+class(kernel_SAMPLE1)
+summary(kernel_SAMPLE1)
+
+kernel_SAMPLE2 <- spkernel2d(sp_point_SAMPLE2, poly=poly_SAMPLE2, h0=bw_SAMPLE2, grd=grd_SAMPLE2)
+class(kernel_SAMPLE2)
+summary(kernel_SAMPLE2)
+```
+```{r}
+help(spkernel2d)
+```
+Saving the kernel deinsity estimates in one database and a grided databse
+(SpatialGridDataFrame) Then, plot the kernel densities. Observe the kernel density of the optimized bandwidth h0=0.1 for SAMPLE1 and h0=0.077 for SAMPLE2. 
+```{r}
+CAdf_SAMPLE1 <- data.frame(kernel1=kernel_SAMPLE1)
+CAsg_SAMPLE1 <- SpatialGridDataFrame(grd_SAMPLE1, data=CAdf_SAMPLE1)
+spplot(CAsg_SAMPLE1, main="California Event Location Bandwidth=0.1")
+
+CAdf_SAMPLE2 <- data.frame(kernel1=kernel_SAMPLE2)
+CAsg_SAMPLE2 <- SpatialGridDataFrame(grd_SAMPLE2, data=CAdf_SAMPLE2)
+spplot(CAsg_SAMPLE2, main="California Event Location Bandwidth=0.077")
+```
+
+**Commonality:** optimized bandwidths for SAMPLE1 and SAMPLE2 get similar kernel density across California event locations (similar kernel density intensity ditribution).
+**Differences:** (1) Although SAMPLE1 and SAMPLE2 come from the same dataset, they have different optimized bandwidths. SAMPLE1 (smaller sample size) has bigger optimized bandwidth while SAMPLE2 (bigger sample size) has smaller optimized bandwidth. (2) The kernel density shows more California event locations for bigger sample size (SAMPLE2) than smaller sample size (SAMPLE1).
+
+
+**Part 3:**  
+(1)Compare the Kriging examples in Isaacs and Srivastava and the class notes of the week of March 5 ??? describe differences.  
+
+First, the Kriging examples in Isaacs and Srivastava use a covariance function while gstat use variogram.
+Second, the Kriging examples in Isaacs and Srivastava impose 7 points to the data while gstat fit a nonlinear equation to the data.
+
+(2)Then, compare them to the examples in ???Phaedon???s Examples of variograms??? document on Gaucho space.  What type of spatial distribution and continuity does the Isaacs&Srivastava represent and how is that different from the data analyzed in the Lecture Notes of March 6? 
+ 
+Isaacs&Srivastava represents discontinous near origin semivariogram shape, which is highly irregular (quasi-random) spatial variability at small scales. The data analyzed in the Lecture Notes of March 6 represents linear shape near origin semivariogram shape, which has continuous spatial variability (not extremely smooth) and spatial variables are not differentiable.
