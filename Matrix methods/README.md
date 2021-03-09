@@ -5,6 +5,6 @@ x.txt <br>
 y.txt <br>
 geost_dat.mat <br>
 
-Codes:
-kriging.m <br>
-lab8.m
+Codes: <br>
+[kriging.m](https://github.com/LilianYou/Geography_Analytics/blob/main/Matrix%20methods/kriging.m) <br>
+[lab8.m](https://github.com/LilianYou/Geography_Analytics/blob/main/Matrix%20methods/lab8.m)
