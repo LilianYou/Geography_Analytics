@@ -1,0 +1,128 @@
+---
+title: "GEOG210B Assignment3: Spatial Regression Models "
+output: pdf_document
+---
+Lily Cheng
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(spdep)
+library(maptools)
+library(leaflet)
+library(RColorBrewer)
+```
+Read data
+```{r}
+CA.poly <- readShapePoly('LPA_Pop_Char_bg.shp')
+```
+
+```{r}
+class(CA.poly)
+```
+Component 1: Data contains the variables that are used in the analysis such as number of households with zero cars, vehicle miles of travel.  remember these are at the block group level
+```{r}
+str(slot(CA.poly, "data"))
+summary(slot(CA.poly, "data"))
+```
+Component 2:  This is the polygon slot and contains the shape information. 
+```{r}
+plot(CA.poly)
+```
+
+Define the dependent variable to number of miles drive alone per household per person
+```{r}
+YCOUNTY <- CA.poly[CA.poly@data$countyname== c("Riverside"), ]
+YCOUNTY@data$drvalM = YCOUNTY@data$drvalM/YCOUNTY@data$n_pr
+YCOUNTY@data$drvalM[is.na(YCOUNTY@data$drvalM)] <- 0
+summary(YCOUNTY@data)
+```
+
+**Non spatial OLS **
+```{r}
+OLSRiver = lm(drvalM ~ HHVEH0 + HHVEH1 + HHVEH2 + HHVEH3 + HHVEH4 + HHVEH5 + HHVEH6 + HHVEH7, data=YCOUNTY@data)
+summary(OLSRiver)
+```
+In this model, if all the variables are 0, the number of miles drive alone per household per person is 54.143miles (p<0.001). If all the variables are not 0, then each more household has no car, the number of miles drive alone per household per person will decrease 8.713 miles (p<0.001); each more household has 2 car, the number of miles drive alone per household per person will increase 3.848 miles (p<0.001); then each more household has 7 car, the number of miles drive alone per household per person will decrease 5.922 miles (p<0.001).
+
+```{r}
+resOLSRiver <- resid(OLSRiver) # save the residuals
+plot(resid(OLSRiver), fitted(OLSRiver)) # Tukey-Anscombe's plot
+```
+
+From the above plot, I can see that residual variability increases with fitted y when fitted y is closer to 10. 
+
+```{r}
+qqnorm(resOLSRiver)
+qqline(resOLSRiver,col="red")
+```
+
+From the plot above, we can see that the quantile data of residual is not aligned with the predicted quantile distribution. Thus, there is variability in residual distribution and thus it corresponds to the plot of the residual with fitted y to look more into the variability.
+
+Spatial weights creation and checking the data
+
+Using neighborhoods based on the k-nearest neighbor rule
+```{r}
+coords<-coordinates(YCOUNTY)	
+IDs<-row.names(as(YCOUNTY,	"data.frame"))	
+plot(YCOUNTY)
+sids_kn10<-knn2nb(knearneigh(coords,	k=10),	row.names=IDs)	
+plot(sids_kn10, coords, add=T)
+```
+```{r}
+summary (sids_kn10)
+```
+```{r}
+sids_kn10_w<- nb2listw(sids_kn10)
+summary(sids_kn10_w)
+```
+Moran's I
+```{r}
+mor10k <- sp.correlogram(sids_kn10, var=YCOUNTY@data$drvalM, order=10, method="I", zero.policy=TRUE)  # need zero policy because some polygons are not connected
+plot(mor10k, main = "Moran I with knn10 Contiguity and Row Standardization")
+```
+```{r}
+LM<-lm.LMtests(OLSRiver, sids_kn10_w, test="all")
+print(LM)
+```
+
+
+**1. Spatial Lag Model **
+```{r}
+SpaLag <- lagsarlm(drvalM ~ HHVEH0 + HHVEH1 + HHVEH2 + HHVEH3 + 
+    HHVEH4 + HHVEH5 + HHVEH6 + HHVEH7, data=YCOUNTY, sids_kn10_w)
+summary(SpaLag)
+```
+The number of miles per person drives alone of a block group is a function of the neighborhood's number of miles per person drive alone. This	output	shows	the	Rho (0.71713)	is	significantly	different	than	zero (p<0.001).	This	means	the number of miles per person drives alone	for	each block group	depends	on	the	the number of miles per person drives alone	of its neighbors. 
+
+**2. Spatial Error Model **
+```{r}
+SpaErr<-errorsarlm(drvalM ~ HHVEH0 + HHVEH1 + HHVEH2 + HHVEH3 + 
+    HHVEH4 + HHVEH5 + HHVEH6 + HHVEH7, data=YCOUNTY, sids_kn10_w)
+summary(SpaErr)
+```
+The error of a block group is a function of the neighbor's errors. From this output I find the estimated model is contradicting the robust of the simple linear model test for error dependence because Lambda (0.75625) is significantly different than zero (p<0.001). The error of a block group is influenced by the neighbor's errors.
+
+**3. SARAR model **
+```{r}
+SARAR<-sacsarlm(drvalM ~ HHVEH0+HHVEH1+HHVEH2+HHVEH3+HHVEH4+HHVEH5+HHVEH6+HHVEH7, data=YCOUNTY, sids_kn10_w)
+summary(SARAR)
+```
+When considering the influence of both neighbor variables and errors by using SARRAR model, I find that both Rho (0.43445, p<0.05) and lambda (0.49564, p<0.001) are significant. This means that Y (the number of miles drive alone per person) is influenced by the neighbor and the error of Y is also influenced by neighbor's error.
+
+**4. Spatial Lag with Lagged explanatory variables **
+```{r}
+SpaLagMix <- lagsarlm(drvalM ~ HHVEH0 + HHVEH1 + HHVEH2 + HHVEH3 + 
+    HHVEH4 + HHVEH5 + HHVEH6 + HHVEH7, data=YCOUNTY, sids_kn10_w, type="mixed")
+summary(SpaLagMix)
+```
+In order to test if Xs are spatially correlated, I used "mixed" type in the lagsarlm. The result shows a bigger Rho (0.69827, p<0.001), which means that the Xs (number of vehicles in the neighboring household) of the neighbors influence their Ys (the number of miles drive alone per person) and contributes even more variables to the Ys. 
+
+**5. SARAR with Lagged explanatory variables **   
+```{r}
+SARARMix<-sacsarlm(drvalM ~ HHVEH0 + HHVEH1 + HHVEH2 + HHVEH3 + 
+    HHVEH4 + HHVEH5 + HHVEH6 + HHVEH7, data=YCOUNTY, sids_kn10_w, type= "sacmixed")
+summary(SARARMix)
+```
+In this SARRAR model with lagged Xs, Rho is smaller (0.30494) and not significant (p= 0.24016) which means that Xs balanced out some variables of the Ys so that Rho is smaller and insignificant. Lambda (0.54095) is bigger and less significant (p<0.05), which means that Xs balanced out some errors of neighbors.
