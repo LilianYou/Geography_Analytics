@@ -33,3 +33,4 @@ A list of exercises cover several key concepts that are useful to solve typical 
 - [The power of linear model](https://github.com/LilianYou/Geography_Analytics/tree/main/The%20power%20of%20linear%20model)
 - [Multivariate statistics](https://github.com/LilianYou/Geography_Analytics/tree/main/Multivariate%20statistics)
 - [Matrix methods](https://github.com/LilianYou/Geography_Analytics/tree/main/Matrix%20methods)
+- [PCA]
