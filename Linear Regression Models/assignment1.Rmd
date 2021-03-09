@@ -1,0 +1,67 @@
+---
+title: "GEOG210B Assignment1:Linear Regression with R"
+output: word_document
+---
+Lily Cheng
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+```{r}
+library(readr)
+
+```
+
+
+```{r}
+SmallHHfile <- read.csv("~/Desktop/Winter_2018/210B/Week1_Basic_Concepts/SmallHHfile.csv")
+#
+# inspect the data we imported
+#
+View(SmallHHfile)
+#
+# display the data.frame
+str(SmallHHfile)
+```
+
+**Part1**: Report a table of descriptive statistics using package *psych* of the variables in the dataset called SmallHHfile.
+
+```{r}
+library(psych)
+describe(SmallHHfile)
+```
+
+**Part2**: Estimate the following model (called Model 1 herein):
+Dependent variable (y): MilesPr
+Independent variables (x): Mon + Tue + Wed + Thu + Fri+ Sat + HHVEH + HHSIZ + suburb + exurb+ rural
+
+**2.1** Report in a table the regression coefficients, their standard errors, t-stats, and R-square (it is ok to just use the standard reporting of R for object lm). Note: I'm supposed to be the only in the class to add interaction in the model and I added the interaction of household lives in rural environment (variable: rural) and daily number of household trips (variable: TRIPS).
+
+**Model1**
+```{r}
+Model1= lm(MilesPr ~ 	Mon	+	Tue	+	Wed	+	Thu	+	Fri+	Sat	+	HHVEH	+	HHSIZ	+	suburb	+	exurb+	rural + rural*HTRIPS, data=SmallHHfile)
+summary(Model1)
+```
+
+**2.1** Write the equation that corresponds to this model.
+$$ \hat{MilesPr} =  27.234 - 3.762Mon -4.408Tue -3.817Wed -4.148Thu + 2.951Sat + 22.823HHVEH -39.164HHSIZ + 7.7suburb + 13.720exurb + 6.803rural + 44.217HTRIPS + 9.580rural*HTRIPS $$
+**2.3** Write a short summary of the model in a similar fashion as our discussion in class highlighting which coefficients are significantly different than zero and what they tell us.
+
+From model1, we could see that a person's travel distance on dairy is related to which day of the week the person chooses to travel, the number of cars the household owns, the number of persons in household, the region the household lives, and daily number of household trips, as well as the interaction between daily number of household trips and the household lives in rural areas. For one more Monday a person travels, the distance will decrease by 3.762miles (p<0.001). For one more Tuesday a person travels, the distance will decrease by 4.408miles (p<0.001). For one more Wednesday a person travels, the distance will decrease by 3.817miles (p<0.001). However, for one more Saturday a person travels, the distance will increase by 2.951miles (p<0.05). For one more car the household owns, the distance will increase by 22.823miles (p<0.001). For one more person lives in household, the distance will decrease by 39.164miles (p<0.001). For one more household lives in suburb area, the distance will increase by 7.7miles (p<0.001). For one more household lives in exurb area, the distance will increase by 13.72miles (p<0.001). For one more household lives in rural area, the distance will increase by 6.803miles (p<0.001). For one more daily number of household trips, the distance will increase 44.217miles (p<0.001). There is also significant difference between household trips and rural areas: for household lives in rural areas that makes one more daily house trips, the distance will increase by 9.58miles (p<0.001).
+
+**Part3**: Estimate a model using just one of the following as the dependent variable (called Model 2 herein). Possible y: TrpPrs (this is the number of trip per person) or HTRIPS (this is the number of trips for each household).3.1 Report in a table the regression coefficients, their standard errors, t-stats, and R-square (it is ok to just use the standard reporting of R for the object lm.
+
+```{r}
+Model2= lm(TrpPrs ~ Mon + Tue + Wed + Thu + Fri + Sat + HHVEH + 
+    HHSIZ + suburb + exurb + rural + rural * HTRIPS,, data=SmallHHfile)
+summary(Model2)
+```
+
+**Model2**
+$$ \hat{TrpPrs} = 145.789 + 4.114Mon + 5.454Tue + 4.868Wed +5.828Thu + 4.838Fri+4.155Sat -2.389HHVEH -188.441HHSIZ -9.118suburb -10.712exurb -16.877rural + 319.951HTRIPS + 7.279rural*HTRIPS $$
+**3.2** Write a comparison summary between Model 1 and Model 2.
+
+Comparing Model1 and Model2, we could find that individual trip numbers increases with the number of days (either weekday or weekend) people spend to complete their dairy while how far a person goes on dairy decreases with more weekdays but increases with more weekends. This means that the more often people go out on diary, more trips they are going to make. Those trips on dairy are shorter if they go out on weekdays and longer if they go out on weekend. A household with more cars will tend to make less trips but longer distance for each trip. A household with more people will tend to make shorter and much less trips on dairy. Among households live in 3 different regions (suburb, exurb, rural) that all tend to make less trips on dairy with longer distance per trip: household lives in rural area will tend to make least trips and household lives in exurb area will tend to make longest distance per trip. Each person's trip amount is closely related to the household trip amount and trip distance. For household lives in rural areas, a person's trip amount and distance on dairy is will both increase with household trip amount.
+
