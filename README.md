@@ -30,4 +30,4 @@ A list of exercises cover several key concepts that are useful to solve typical 
 - [Univariate statistic and Bivariate statistics](https://github.com/LilianYou/Geography_Analytics/tree/main/Univariate%20statistic%20and%20Bivariate%20statistics)
 - [Time series and dynamic model](https://github.com/LilianYou/Geography_Analytics/tree/main/Time%20series%20and%20dynamic%20model)
 - [Detecting correlations among data](https://github.com/LilianYou/Geography_Analytics/tree/main/Detecting%20correlations%20among%20data)
-- [The power of linear model]
+- [The power of linear model](https://github.com/LilianYou/Geography_Analytics/tree/main/The%20power%20of%20linear%20model)
