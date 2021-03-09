@@ -22,5 +22,5 @@ A list of exercises in probability and statistics, multivariate analysis methods
 - [Matrix Linear Regression and Diagnostics](https://github.com/LilianYou/Geography_Analytics/tree/main/Matrix%20Linear%20Regression%20and%20Diagnostics)
 - [Spatial Regression Models](https://github.com/LilianYou/Geography_Analytics/tree/main/Spatial%20Regression%20Models)
 - [Spatial Point Patterns & Kriging](https://github.com/LilianYou/Geography_Analytics/tree/main/Spatial%20Point%20Patterns%20&%20Kriging)
-- [a ggplot visualization exercise]
+- [a ggplot visualization exercise](https://github.com/LilianYou/Geography_Analytics/tree/main/ggplot%20visualization%20exercise)
 
