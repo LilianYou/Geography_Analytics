@@ -1,0 +1,57 @@
+
+Regression Results
+==================================================================================================
+                                                                           Dependent variable:    
+                                                                       ---------------------------
+                                                                       Number of Miles per Person 
+--------------------------------------------------------------------------------------------------
+Monday                                                                          -2.872***         
+                                                                                 (0.763)          
+                                                                                                  
+Tuesday                                                                         -3.332***         
+                                                                                 (0.756)          
+                                                                                                  
+Wednesday                                                                       -2.881***         
+                                                                                 (0.755)          
+                                                                                                  
+Thursday                                                                        -3.117***         
+                                                                                 (0.751)          
+                                                                                                  
+Friday                                                                            0.205           
+                                                                                 (0.761)          
+                                                                                                  
+Saturday                                                                        2.233***          
+                                                                                 (0.756)          
+                                                                                                  
+Number of vehicles a household owns                                             5.124***          
+                                                                                 (0.224)          
+                                                                                                  
+household has                                                                   -7.384***         
+                                                                                 (0.189)          
+                                                                                                  
+Residence in Suburb Env                                                         4.173***          
+                                                                                 (0.542)          
+                                                                                                  
+Residence in Exurb Env                                                          7.927***          
+                                                                                 (0.578)          
+                                                                                                  
+Residence in Rural Env                                                          5.337***          
+                                                                                 (0.784)          
+                                                                                                  
+the Number of Trips a household made                                            1.490***          
+                                                                                 (0.034)          
+                                                                                                  
+the interaction between rural and the number of trips a household made          0.661***          
+                                                                                 (0.069)          
+                                                                                                  
+Constant                                                                        20.595***         
+                                                                                 (0.756)          
+                                                                                                  
+--------------------------------------------------------------------------------------------------
+Observations                                                                     42,431           
+R2                                                                                0.077           
+Adjusted R2                                                                       0.077           
+Residual Std. Error                                                        41.756 (df = 42417)    
+F Statistic                                                            272.747*** (df = 13; 42417)
+==================================================================================================
+Note:                                                                  *p<0.1; **p<0.05; ***p<0.01

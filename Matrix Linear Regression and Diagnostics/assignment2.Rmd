@@ -1,0 +1,170 @@
+---
+title: "GEOG210B Assignment2: Matrix Linear Regression with R and Diagnostics"
+output: pdf_document
+---
+Lily Cheng
+
+**Part1: Using the following matrices estimate a linear regression model with Y the dependent variable and X the independent. **
+
+Create Matrix using the matrix function
+
+1. Create X matrix
+$$X$$
+```{r}
+X <- matrix(c(1,1,1,1,1,1,1,1,1,1,1, 
+              2,3,1,5,9,11,11,11,12,12,12,
+              43,42,43,54,61,35,52,86,45,44,34,
+              1,1,1,1,0,0,0,0,0,0,0),11,4)
+X
+```
+2. Transpose X
+$$X'$$
+```{r}
+XT <- t(X)
+XT
+```
+3. X transpose X
+$$X'X$$
+
+```{r}
+XTX <- XT %*% X
+XTX
+```
+4. Inverse of (XT*X)
+$$(X'X)^{-1}$$
+
+```{r}
+XTXI <- solve(XTX)
+XTXI
+det(XTX)
+```
+X is a square matrix.
+
+
+5. Check if the inverse satisfies the inverse properties
+$$(X'X)^{-1}(X'X) = I$$
+```{r}
+Check <- XTXI %*% XTX
+Check
+```
+The inverse satisfies the inverse properties.
+
+
+6. Create Y matrix
+$$Y$$
+```{r}
+Y <- matrix(c(4,7,3,9,17,27,13,121,10,11,23),11,1)
+Y
+```
+X transpose Y
+$$ X'Y $$
+```{r}
+XTY <- t(X) %*% Y
+XTY
+```
+Here are the coefficient estimates
+$$(X'X)^{-1}(X'Y) = \hat{\beta}$$
+```{r}
+alphabeta = XTXI %*% XTY
+alphabeta
+```
+
+
+**Part2: Using the model in Part 3 of your assignment 1, report every statistical test you learned in Geog 210B and explain what it means and what your findings are.  For example, which variables are significantly different than zero?  Are the error terms more likely to be heretoskedastic? Are the error terms autocorrelated? **
+
+Here is the model I used in Part3 of my assignment1
+```{r}
+SmallHHfile <- read.csv("~/Desktop/Winter_2018/210B/Week1_Basic_Concepts/SmallHHfile.csv")
+#
+# inspect the data we imported
+#
+View(SmallHHfile)
+#
+# display the data.frame
+str(SmallHHfile)
+```
+
+```{r}
+Model2= lm(TrpPrs ~ Mon + Tue + Wed + Thu + Fri + Sat + HHVEH + 
+    HHSIZ + suburb + exurb + rural + HTRIPS + rural * HTRIPS, data=SmallHHfile)
+summary(Model2)
+```
+
+$$ \hat{TrpPrs} = 145.789 + 4.114Mon + 5.454Tue + 4.868Wed +5.828Thu + 4.838Fri
++4.155Sat -2.389HHVEH -188.441HHSIZ -9.118suburb -10.712exurb -16.877rural + 
+319.951HTRIPS + 7.279rural*HTRIPS $$
+1. Check if the mean of the residual is zero.
+```{r}
+Model2.res = resid(Model2)
+summary(Model2.res)
+```
+The mean of the residual is zero.
+
+
+2. Look at the ANOVA table of this regression model
+```{r}
+anova(Model2)
+```
+By reading the sum of squares of ANOVA table, I know that trips a household made (HTRIPS) contributes most to the number of trips a person made(TrpPrs). The number of household living in a rural area (rural) contributes the second to the number of trips a person made. Shopping on diary on Friday (Fri) and Thursday (Thu) contribute at the third level to the number of trips a person made. Then number of cars a household owns (HHVEH) contribute the fourth to the number of trips a person made. Shopping on Tuesday (Tue) or Wednesday (Wed) contribute at the fifth level to the number of trips a person made. Next level of contributions come from shopping on Saturday (Sat), and then the contribution orders goes by shopping on Monday (Mon), how many household lives in exurb (exurb), and the size of household (HHSIZ). The number of household trips made by household that lives in rural areas (rural:HTRIPS) and number of household lives in suburb areas (suburb) contribute least out of the model to the number of trips a person made.
+
+3. In order to whether the distribution of residual fits the theoretical distribution, I plot Q-Q Plot.
+```{r}
+qqnorm(Model2.res)
+qqline(Model2.res,col="red")
+```
+From the plot above, we can see that the quantile data of residual is not aligned with the predicted quantile distribution. Thus, there is variability in residual distribution and then I plot the residual with fitted y to look more into the variability.
+```{r}
+plot(resid(Model2),fitted(Model2))
+```
+
+
+From the above plot, I can see that residual variability decreases with fitted y when fitted y is between -5 and around 2.5. However, the residual variability increases with fitted y as fitted y goes over around 2.5.
+
+
+
+**Put side by side a model with White's correction for the standard errors of the coefficient estimates and without and decide if the correction changes your findings about the significance of coefficients. **
+
+4.
+```{r}
+library(sandwich)
+library(lmtest)
+coeftest(Model2,vcov = vcovHC(Model2, type = "const"))
+```
+```{r}
+coeftest(Model2,vcov = vcovHC(Model2, type = "HC0")) # white's adjustment
+```
+By comparing the model with and without White's correction for the standard error of the coefficient estimates and without, the correction doesn't change the significance of coefficients.
+
+
+5. The Breusch-Pagan test for heteroskedasticity
+```{r}
+bptest(Model2, studentize = TRUE)
+```
+With p value of BP test being significant, the Model2 is heteroskedastic.
+
+
+6. Calculate autocorrelation.
+```{r}
+dwtest(Model2)
+```
+As the value of DW is between 0 and 2, there is positive autocorrelation of the data. 
+
+7. Using stargazer to make a nicer formatting table with lm objects
+```{r}
+library(stargazer)
+```
+```{r}
+Model2 = lm(MilesPr ~ 	Mon	+	Tue	+	Wed	+	Thu	+	Fri+	Sat	+	HHVEH	+	HHSIZ	+	suburb	
+            +	exurb+	rural + HTRIPS + rural*HTRIPS, data=SmallHHfile)
+stargazer(Model2, type="text", title="Regression Results", 
+          dep.var.labels=c("Number of Miles per Person"), 
+          covariate.labels=c( "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday",
+                              "Number of vehicles a household owns", "Number of people a 
+                              household has","Residence in Suburb Env", "Residence in Exurb Env", 
+                              "Residence in Rural Env","the Number of Trips a household made", 
+                              "the interaction between rural and the number of trips a household made"
+                              ), out="Februray, 20.txt")
+
+
+```
+
