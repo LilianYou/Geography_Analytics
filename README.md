@@ -28,3 +28,4 @@ A list of exercises in probability and statistics, multivariate analysis methods
 A list of exercises cover several key concepts that are useful to solve typical problems in environmental science, such as linear and non-linear time series analysis, matrix methods, filtering, linear model, and regridding method/analysis. This repository only includes my own course work. Thanks for the guidance from [Prof. Qinghua Ding](https://www.geog.ucsb.edu/people/faculty/qinghua-ding).
 - [Statistics Review](https://github.com/LilianYou/Geography_Analytics/tree/main/Statistics%20Review)
 - [Univariate statistic and Bivariate statistics](https://github.com/LilianYou/Geography_Analytics/tree/main/Univariate%20statistic%20and%20Bivariate%20statistics)
+- [Time series and dynamic model]
