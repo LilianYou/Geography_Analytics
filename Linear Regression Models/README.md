@@ -8,7 +8,7 @@ Meta Data: <br>
 'CODEBOOK for SmallHHFile.docx' <br>
 
 Codes: <br>
-assignment1.Rmd <br>
+[assignment1.Rmd](https://github.com/LilianYou/Geography_Analytics/blob/main/Linear%20Regression%20Models/assignment1.Rmd) <br>
 
 My Report: <br>
 [Transport_distance_analyses](https://github.com/LilianYou/Geography_Analytics/blob/main/Linear%20Regression%20Models/assignment1_Lily.pdf)
