@@ -6,4 +6,4 @@ neuse-1.5.txt <br>
 rocks-1.7.txt <br>
 
 Code: <br>
-Lab1_Lily.m
+[Lab1_Lily.m](https://github.com/LilianYou/Geography_Analytics/blob/main/Statistics%20Review/Lab1_Lily.m)
